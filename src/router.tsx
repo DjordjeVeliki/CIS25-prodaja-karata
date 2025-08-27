@@ -7,6 +7,7 @@ import Dogadjaji from "./stranice/Dogadjaji";
 import DetaljDogadjaja from "./stranice/DetaljDogadjaja";
 import Korpa from "./stranice/Korpa";
 import Profil from "./stranice/Profil";
+import PrivatnaRuta from "./zastita/PrivatnaRuta";
 
 export const router = createBrowserRouter([
   {
@@ -18,8 +19,14 @@ export const router = createBrowserRouter([
       { path: "registracija", element: <Registracija /> },
       { path: "dogadjaji", element: <Dogadjaji /> },
       { path: "dogadjaji/:id", element: <DetaljDogadjaja /> },
-      { path: "korpa", element: <Korpa /> },
-      { path: "profil", element: <Profil /> },
+
+      {
+        element: <PrivatnaRuta />,
+        children: [
+          { path: "korpa", element: <Korpa /> },
+          { path: "profil", element: <Profil /> },
+        ],
+      },
     ],
   },
 ]);

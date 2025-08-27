@@ -1,9 +1,7 @@
-import { createContext, useMemo } from "react";
-import type { ReactNode } from "react";                // ⬅️ type-only
-import { useLokalnoSkladiste } from "../kuke/useLokalnoSkladiste";
+import { createContext, useMemo, useEffect, useState, type ReactNode, useContext } from "react";
 import { Korpa } from "../klase/Korpa";
-import type { StavkaKorpe } from "../modeli/StavkaKorpe"; // ⬅️ type-only
-
+import type { StavkaKorpe } from "../modeli/StavkaKorpe";
+import { AuthKontekst } from "./AuthKontekst";
 
 type KorpaKontekstTip = {
   korpa: Korpa;
@@ -19,7 +17,37 @@ type KorpaKontekstTip = {
 export const KorpaKontekst = createContext<KorpaKontekstTip>({} as any);
 
 export function KorpaKontekstProvajder({ children }: { children: ReactNode }) {
-  const [stavke, setStavke] = useLokalnoSkladiste<StavkaKorpe[]>("korpa_stavke", []);
+  const { korisnik } = useContext(AuthKontekst);
+
+  // dinamički ključ po korisniku
+  const kljuc = korisnik ? `korpa_stavke_${korisnik.id}` : "korpa_stavke_gost";
+
+  // lokalno stanje korpe
+  const [stavke, setStavke] = useState<StavkaKorpe[]>(() => {
+    try {
+      const raw = localStorage.getItem(kljuc);
+      return raw ? (JSON.parse(raw) as StavkaKorpe[]) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  // kad se promeni korisnik/ključ -> učitaj njegovu korpu
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(kljuc);
+      setStavke(raw ? (JSON.parse(raw) as StavkaKorpe[]) : []);
+    } catch {
+      setStavke([]);
+    }
+  }, [kljuc]);
+
+  // svaki put kad se korpa promeni -> snimi pod aktivnim ključem
+  useEffect(() => {
+    try {
+      localStorage.setItem(kljuc, JSON.stringify(stavke));
+    } catch {}
+  }, [kljuc, stavke]);
 
   const korpa = useMemo(() => new Korpa(structuredClone(stavke)), [stavke]);
 
@@ -48,16 +76,20 @@ export function KorpaKontekstProvajder({ children }: { children: ReactNode }) {
     sync(k);
   };
 
-  const vrednosti: KorpaKontekstTip = {
-    korpa,
-    stavke,
-    dodajUKorpu,
-    ukloniIzKorpe,
-    promeniKolicinu,
-    ocistiKorpu,
-    ukupno: korpa.ukupno(),
-    ukupnoKomada: korpa.ukupnoKomada(),
-  };
-
-  return <KorpaKontekst.Provider value={vrednosti}>{children}</KorpaKontekst.Provider>;
+  return (
+    <KorpaKontekst.Provider
+      value={{
+        korpa,
+        stavke,
+        dodajUKorpu,
+        ukloniIzKorpe,
+        promeniKolicinu,
+        ocistiKorpu,
+        ukupno: korpa.ukupno(),
+        ukupnoKomada: korpa.ukupnoKomada(),
+      }}
+    >
+      {children}
+    </KorpaKontekst.Provider>
+  );
 }
