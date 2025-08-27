@@ -4,28 +4,32 @@ export interface Dogadjaj {
   opis: string;
   datum: string;
   cena: number;
+  kategorija?: string;
 }
 
 export const dogadjaji: Dogadjaj[] = [
-  {
+    {
     id: 1,
     naziv: "Koncert Bajaga i Instruktori",
     opis: "Veliki koncert domaće rok legende.",
     datum: "2025-09-10",
-    cena: 1500
-  },
-  {
+    cena: 1500,
+    kategorija: "koncert"
+    },
+    {
     id: 2,
     naziv: "Pozorišna predstava - Hamlet",
     opis: "Klasik u izvedbi Narodnog pozorišta.",
     datum: "2025-09-20",
-    cena: 1200
-  },
-  {
+    cena: 1200,
+    kategorija: "pozoriste"
+    },
+    {
     id: 3,
     naziv: "Muzejska izložba - Egipatske relikvije",
     opis: "Retke relikvije iz drevnog Egipta.",
     datum: "2025-10-01",
-    cena: 800
-  }
+    cena: 800,
+    kategorija: "izlozba"
+    }
 ];
