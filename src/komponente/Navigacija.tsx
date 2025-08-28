@@ -23,7 +23,7 @@ export default function Navigacija() {
 
   return (
     <nav className="navbar navbar-expand-lg bg-body-tertiary mb-3">
-      <div className="container">
+      <div className="container-fluid">
         <Link className="navbar-brand fw-bold" to="/">🎟️ Prodaja Karata</Link>
 
         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
