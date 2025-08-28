@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useContext, useMemo } from "react";
 import { AuthKontekst } from "../kontekst/AuthKontekst";
 import { KorpaKontekst } from "../kontekst/KorpaKontekst";
@@ -8,9 +8,11 @@ export default function Navigacija() {
   const { stavke, ukupnoKomada } = useContext(KorpaKontekst);
   const navigate = useNavigate();
 
-  // fallback: izračunaj broj komada direktno iz stavki ako iz nekog razloga nema ukupnoKomada
   const brojUKorpi = useMemo(
-    () => (typeof ukupnoKomada === "number" ? ukupnoKomada : stavke.reduce((s, x) => s + x.kolicina, 0)),
+    () =>
+      typeof ukupnoKomada === "number"
+        ? ukupnoKomada
+        : stavke.reduce((s, x) => s + x.kolicina, 0),
     [ukupnoKomada, stavke]
   );
 
@@ -20,49 +22,50 @@ export default function Navigacija() {
   };
 
   return (
-    <nav style={{ display: "flex", gap: "1rem", marginBottom: 16, alignItems: "center" }}>
-      <Link to="/">Početna</Link>
-      <Link to="/dogadjaji">Događaji</Link>
+    <nav className="navbar navbar-expand-lg bg-body-tertiary mb-3">
+      <div className="container">
+        <Link className="navbar-brand fw-bold" to="/">🎟️ Prodaja Karata</Link>
 
-      <Link to="/korpa" style={{ position: "relative" }}>
-        Korpa
-        {brojUKorpi > 0 && (
-          <span
-            style={{
-              position: "absolute",
-              top: -8,
-              right: -12,
-              background: "crimson",
-              color: "white",
-              borderRadius: 12,
-              padding: "0 6px",
-              fontSize: 12,
-              lineHeight: "18px",
-              minWidth: 18,
-              textAlign: "center",
-            }}
-            aria-label={`Broj artikala u korpi: ${brojUKorpi}`}
-          >
-            {brojUKorpi}
-          </span>
-        )}
-      </Link>
+        <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
+          <span className="navbar-toggler-icon"></span>
+        </button>
 
-      <Link to="/profil">Profil</Link>
+        <div className="collapse navbar-collapse" id="navMain">
+          <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+            <li className="nav-item"><NavLink className="nav-link" to="/">Početna</NavLink></li>
+            <li className="nav-item"><NavLink className="nav-link" to="/dogadjaji">Događaji</NavLink></li>
+            <li className="nav-item position-relative">
+              <NavLink className="nav-link" to="/korpa">
+                Korpa
+                {brojUKorpi > 0 && (
+                  <span className="badge bg-danger position-absolute top-0 start-100 translate-middle">
+                    {brojUKorpi}
+                  </span>
+                )}
+              </NavLink>
+            </li>
+          </ul>
 
-      <div style={{ marginLeft: "auto" }}>
-        {korisnik ? (
-          <>
-            <span style={{ marginRight: 10 }}>
-              Ulogovan: <b>{korisnik.ime}</b>
-            </span>
-            <button onClick={handleOdjava}>Odjavi se</button>
-          </>
-        ) : (
-          <>
-            <Link to="/prijava">Prijava</Link> | <Link to="/registracija">Registracija</Link>
-          </>
-        )}
+          <ul className="navbar-nav">
+            {korisnik ? (
+              <>
+                <li className="nav-item d-flex align-items-center me-2">
+                  Ulogovan: <b className="ms-1">{korisnik.ime}</b>
+                </li>
+                <li className="nav-item">
+                  <button className="btn btn-outline-secondary btn-sm" onClick={handleOdjava}>
+                    Odjavi se
+                  </button>
+                </li>
+              </>
+            ) : (
+              <>
+                <li className="nav-item"><NavLink className="nav-link" to="/prijava">Prijava</NavLink></li>
+                <li className="nav-item"><NavLink className="nav-link" to="/registracija">Registracija</NavLink></li>
+              </>
+            )}
+          </ul>
+        </div>
       </div>
     </nav>
   );
