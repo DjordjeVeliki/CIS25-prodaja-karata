@@ -1,6 +1,8 @@
 import { useContext, useMemo } from "react";
 import { AuthKontekst } from "../kontekst/AuthKontekst";
 import { ucitajNarudzbine } from "../servisi/narudzbine";
+import { formatCena, formatDatumVreme } from "../utils/format";
+
 
 export default function Profil() {
   const { korisnik, odjava } = useContext(AuthKontekst);
@@ -27,8 +29,8 @@ export default function Profil() {
           {narudzbine.map(n => (
             <li key={n.id} style={{ marginBottom: 12 }}>
               <div>
-                <strong>Datum:</strong> {new Date(n.datumISO).toLocaleString()} |
-                <strong> Ukupno:</strong> {n.ukupno} RSD
+                <strong>Datum:</strong> {formatDatumVreme(n.datumISO)} |
+                <strong> Ukupno:</strong> {formatCena(n.ukupno)}
               </div>
               <div>
                 {n.stavke.map(s => (

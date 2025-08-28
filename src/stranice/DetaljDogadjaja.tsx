@@ -2,6 +2,8 @@ import { useParams } from "react-router-dom";
 import { dogadjaji } from "../podaci/dogadjaji";
 import { useContext } from "react";
 import { KorpaKontekst } from "../kontekst/KorpaKontekst";
+import { formatCena, formatDatumVreme } from "../utils/format";
+
 
 export default function DetaljDogadjaja() {
   const { id } = useParams();
@@ -14,8 +16,8 @@ export default function DetaljDogadjaja() {
     <div>
       <h2>{dogadjaj.naziv}</h2>
       <p>{dogadjaj.opis}</p>
-      <p><strong>Datum:</strong> {dogadjaj.datum}</p>
-      <p><strong>Cena:</strong> {dogadjaj.cena} RSD</p>
+      <p><strong>Datum:</strong> {formatDatumVreme(dogadjaj.datum)}</p>
+      <p><strong>Cena:</strong> {formatCena(dogadjaj.cena)} RSD</p>
       <button onClick={() => dodajUKorpu({ idDogadjaja: dogadjaj.id, naziv: dogadjaj.naziv, cena: dogadjaj.cena })}>
         Dodaj u korpu
       </button>

@@ -4,6 +4,7 @@ import { KorpaKontekst } from "../kontekst/KorpaKontekst";
 import { AuthKontekst } from "../kontekst/AuthKontekst";
 import { dodajNarudzbinu } from "../servisi/narudzbine";
 import type { Narudzbina } from "../modeli/Narudzbina";
+import { formatCena } from "../utils/format";
 
 export default function Korpa() {
   const { stavke, promeniKolicinu, ukloniIzKorpe, ocistiKorpu, korpa } = useContext(KorpaKontekst);
@@ -63,13 +64,13 @@ export default function Korpa() {
             {stavke.map(s => (
               <tr key={s.idDogadjaja}>
                 <td>{s.naziv}</td>
-                <td>{s.cena} RSD</td>
+                <td>{formatCena(s.cena)}</td>
                 <td>
                   <button onClick={() => promeniKolicinu(s.idDogadjaja, Math.max(1, s.kolicina - 1))}>-</button>
                   <span style={{ padding: "0 8px" }}>{s.kolicina}</span>
                   <button onClick={() => promeniKolicinu(s.idDogadjaja, s.kolicina + 1)}>+</button>
                 </td>
-                <td>{s.cena * s.kolicina} RSD</td>
+                <td>{formatCena(s.cena * s.kolicina)}</td>
                 <td>
                   <button onClick={() => ukloniIzKorpe(s.idDogadjaja)}>Ukloni</button>
                 </td>
@@ -80,7 +81,7 @@ export default function Korpa() {
       )}
 
       <div style={{ marginTop: 16 }}>
-        <strong>Ukupno: {ukupno} RSD</strong>
+        <strong>Ukupno: {formatCena(korpa.ukupno())}</strong>
       </div>
 
       <div style={{ marginTop: 12 }}>

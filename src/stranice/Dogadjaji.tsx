@@ -3,6 +3,8 @@ import { useMemo } from "react";
 import { dogadjaji, type Dogadjaj } from "../podaci/dogadjaji";
 import { Filteri } from "../komponente/filtriranje/Filteri";
 import { Paginacija } from "../komponente/filtriranje/Paginacija";
+import { formatCena } from "../utils/format";
+
 
 const PO_STRANI = 5;
 
@@ -61,7 +63,7 @@ export default function Dogadjaji() {
               <strong>{d.naziv}</strong>
               {d.kategorija ? <> — <em>{d.kategorija}</em></> : null}
               <br />
-              Datum: {d.datum} — Cena: {d.cena} RSD
+              Datum: {d.datum} — Cena: {formatCena(d.cena)}
               <br />
               <Link to={`/dogadjaji/${d.id}`}>Detalji</Link>
             </li>
