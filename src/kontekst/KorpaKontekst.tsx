@@ -6,7 +6,8 @@ import { AuthKontekst } from "./AuthKontekst";
 type KorpaKontekstTip = {
   korpa: Korpa;
   stavke: StavkaKorpe[];
-  dodajUKorpu: (p: { idDogadjaja: number; naziv: string; cena: number }, kolicina?: number) => void;
+
+  dodajUKorpu: (p: { idDogadjaja: number; naziv: string; cena: number }, kolicina?: number) => boolean;
   ukloniIzKorpe: (idDogadjaja: number) => void;
   promeniKolicinu: (idDogadjaja: number, kolicina: number) => void;
   ocistiKorpu: () => void;
@@ -19,10 +20,10 @@ export const KorpaKontekst = createContext<KorpaKontekstTip>({} as any);
 export function KorpaKontekstProvajder({ children }: { children: ReactNode }) {
   const { korisnik } = useContext(AuthKontekst);
 
-  // dinamički ključ po korisniku
+
   const kljuc = korisnik ? `korpa_stavke_${korisnik.id}` : "korpa_stavke_gost";
 
-  // lokalno stanje korpe
+
   const [stavke, setStavke] = useState<StavkaKorpe[]>(() => {
     try {
       const raw = localStorage.getItem(kljuc);
@@ -32,7 +33,6 @@ export function KorpaKontekstProvajder({ children }: { children: ReactNode }) {
     }
   });
 
-  // kad se promeni korisnik/ključ -> učitaj njegovu korpu
   useEffect(() => {
     try {
       const raw = localStorage.getItem(kljuc);
@@ -42,7 +42,7 @@ export function KorpaKontekstProvajder({ children }: { children: ReactNode }) {
     }
   }, [kljuc]);
 
-  // svaki put kad se korpa promeni -> snimi pod aktivnim ključem
+
   useEffect(() => {
     try {
       localStorage.setItem(kljuc, JSON.stringify(stavke));
@@ -50,13 +50,17 @@ export function KorpaKontekstProvajder({ children }: { children: ReactNode }) {
   }, [kljuc, stavke]);
 
   const korpa = useMemo(() => new Korpa(structuredClone(stavke)), [stavke]);
-
   const sync = (k: Korpa) => setStavke(structuredClone(k.stavke));
 
   const dodajUKorpu: KorpaKontekstTip["dodajUKorpu"] = (p, kolicina = 1) => {
+
+    if (!korisnik) {
+      return false;
+    }
     const k = new Korpa(structuredClone(stavke));
     k.dodaj(p, kolicina);
     sync(k);
+    return true;
   };
 
   const ukloniIzKorpe = (id: number) => {

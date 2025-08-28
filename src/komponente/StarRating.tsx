@@ -8,7 +8,7 @@ export default function StarRating({ dogadjajId }: Props) {
   const { korisnik } = useContext(AuthKontekst);
   const om = new OceneMenadzer();
 
-  // stabilan ključ za korisnika (id > email > ime)
+ 
   const korisnikKljuc = useMemo(() => {
     if (!korisnik) return null;
     const anyK = korisnik as any;
@@ -24,7 +24,7 @@ export default function StarRating({ dogadjajId }: Props) {
     korisnikKljuc ? om.mojaOcena(dogadjajId, korisnikKljuc) : null
   );
 
-  // za hover efekat
+
   const [hover, setHover] = useState<number | null>(null);
 
   useEffect(() => {
@@ -32,12 +32,11 @@ export default function StarRating({ dogadjajId }: Props) {
     setBroj(om.brojOcena(dogadjajId));
     if (korisnikKljuc) setMoja(om.mojaOcena(dogadjajId, korisnikKljuc));
     else setMoja(null);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  
   }, [dogadjajId, korisnikKljuc]);
 
-  // postavljanje/menjanje ocene — isto je 1 ocena po korisniku (overwrite)
   const postavi = (o: number) => {
-    if (!korisnikKljuc) return; // gosti ne ocenjuju
+    if (!korisnikKljuc) return; 
     om.oceni(dogadjajId, korisnikKljuc, o);
     setMoja(o);
     setProsek(om.prosek(dogadjajId));

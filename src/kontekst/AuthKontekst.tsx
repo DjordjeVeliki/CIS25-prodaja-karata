@@ -14,7 +14,7 @@ export const AuthKontekst = createContext<AuthTip>({} as AuthTip);
 export function AuthProvajder({ children }: { children: ReactNode }) {
   const [korisnik, setKorisnik] = useState<Korisnik | null>(null);
 
-  // Učitavanje ulogovanog korisnika pri startu
+
   useEffect(() => {
     const raw = localStorage.getItem("auth_korisnik");
     if (raw) {
@@ -26,13 +26,13 @@ export function AuthProvajder({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  // Snimanje ulogovanog korisnika na svaku promenu
+
   useEffect(() => {
     if (korisnik) localStorage.setItem("auth_korisnik", JSON.stringify(korisnik));
     else localStorage.removeItem("auth_korisnik");
   }, [korisnik]);
 
-  // „Baza“ korisnika u localStorage (samo za demo)
+
   type ZapisUBazi = { id: string; ime: string; email: string; lozinka: string };
 
   const getBaza = (): ZapisUBazi[] => {

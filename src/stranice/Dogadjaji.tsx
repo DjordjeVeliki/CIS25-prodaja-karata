@@ -1,29 +1,56 @@
-import { Link, useSearchParams } from "react-router-dom";
-import { useMemo } from "react";
+// src/stranice/Dogadjaji.tsx
+import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { dogadjaji, type Dogadjaj } from "../podaci/dogadjaji";
-import { Filteri } from "../komponente/filtriranje/Filteri";
-import { Paginacija } from "../komponente/filtriranje/Paginacija";
-import { formatCena } from "../utils/format";
+import DogadjajKartica from "../komponente/DogadjajKartica";
 
-
-const PO_STRANI = 5;
+const PO_STRANI = 8;
 
 export default function Dogadjaji() {
-  // query parametri: ?k=koncert&min=0&max=2000&page=2
   const [params, setParams] = useSearchParams();
 
-  const kategorija = params.get("k") ?? "";
-  const minCena = Number(params.get("min") ?? "0");
-  const maxCena = Number(params.get("max") ?? `${Number.POSITIVE_INFINITY}`);
+  // početne vrednosti iz URL-a
+  const startKategorija = params.get("k") ?? "";
+  const startMin = params.get("min") ?? "";
+  const startMax = params.get("max") ?? "";
   const stranica = Math.max(1, Number(params.get("page") ?? "1"));
+
+  // state za kontrole 
+  const [kategorija, setKategorija] = useState<string>(startKategorija);
+  const [minCenaStr, setMinCenaStr] = useState<string>(startMin);
+  const [maxCenaStr, setMaxCenaStr] = useState<string>(startMax);
+
+  // auto-primena filtera (debounce 300ms)
+  useEffect(() => {
+    const id = setTimeout(() => {
+      const next = new URLSearchParams();
+      if (kategorija) next.set("k", kategorija);
+      if (minCenaStr) next.set("min", minCenaStr);
+      if (maxCenaStr) next.set("max", maxCenaStr);
+      next.set("page", "1");
+      setParams(next, { replace: true });
+    }, 300);
+    return () => clearTimeout(id);
+  }, [kategorija, minCenaStr, maxCenaStr, setParams]);
+
+  // jedinstvene kategorije
+  const kategorije = useMemo(() => {
+    const s = new Set<string>();
+    dogadjaji.forEach((d) => { if (d.kategorija) s.add(d.kategorija); });
+    return Array.from(s).sort();
+  }, []);
+
+  const minCena = minCenaStr ? Number(minCenaStr) : Number.NEGATIVE_INFINITY;
+  const maxCena = maxCenaStr ? Number(maxCenaStr) : Number.POSITIVE_INFINITY;
 
   // filtriranje
   const filtrirani: Dogadjaj[] = useMemo(() => {
     return dogadjaji.filter((d) => {
       const katOK = !kategorija || (d.kategorija ?? "") === kategorija;
-      const cenaOK = d.cena >= (isFinite(minCena) ? minCena : 0) &&
-                     d.cena <= (isFinite(maxCena) ? maxCena : Number.POSITIVE_INFINITY);
-      return katOK && cenaOK;
+      const cena = d.cena;
+      const minOK = isFinite(minCena) ? cena >= minCena : true;
+      const maxOK = isFinite(maxCena) ? cena <= maxCena : true;
+      return katOK && minOK && maxOK;
     });
   }, [kategorija, minCena, maxCena]);
 
@@ -33,15 +60,6 @@ export default function Dogadjaji() {
   const od = (bezbednaStrana - 1) * PO_STRANI;
   const prikaz = filtrirani.slice(od, od + PO_STRANI);
 
-  const primeniFiltere = (k: string, min: number, max: number) => {
-    const next = new URLSearchParams(params);
-    if (k) next.set("k", k); else next.delete("k");
-    if (isFinite(min) && min > 0) next.set("min", String(min)); else next.delete("min");
-    if (isFinite(max)) next.set("max", String(max)); else next.delete("max");
-    next.set("page", "1"); // reset na prvu stranu kada menjamo filtere
-    setParams(next, { replace: true });
-  };
-
   const promeniStranu = (nova: number) => {
     const next = new URLSearchParams(params);
     next.set("page", String(Math.min(Math.max(1, nova), ukupnoStrana)));
@@ -49,33 +67,74 @@ export default function Dogadjaji() {
   };
 
   return (
-    <div>
-      <h2>Spisak događaja</h2>
+    <div className="container my-4">
+      <h2 className="mb-3">Spisak događaja</h2>
 
-      <Filteri onFilter={primeniFiltere} />
+      {/* FILTER BAR (bez submit dugmeta) */}
+      <div className="row g-2 align-items-center mb-3">
+        <div className="col-12 col-md-4 col-lg-3">
+          <select className="form-select" value={kategorija} onChange={(e) => setKategorija(e.target.value)}>
+            <option value="">Sve kategorije</option>
+            {kategorije.map((k) => (
+              <option key={k} value={k}>{k}</option>
+            ))}
+          </select>
+        </div>
 
+        <div className="col-6 col-md-3 col-lg-2">
+          <input
+            type="number"
+            className="form-control"
+            placeholder="Min cena"
+            value={minCenaStr}
+            onChange={(e) => setMinCenaStr(e.target.value)}
+          />
+        </div>
+
+        <div className="col-6 col-md-3 col-lg-2">
+          <input
+            type="number"
+            className="form-control"
+            placeholder="Max cena"
+            value={maxCenaStr}
+            onChange={(e) => setMaxCenaStr(e.target.value)}
+          />
+        </div>
+      </div>
+
+      {/* GRID KARTICA */}
       {prikaz.length === 0 ? (
-        <p>Nema događaja po zadatim filterima.</p>
+        <p className="text-muted">Nema događaja po zadatim filterima.</p>
       ) : (
-        <ul>
+        <div className="row g-3">
           {prikaz.map((d) => (
-            <li key={d.id} style={{ marginBottom: "12px" }}>
-              <strong>{d.naziv}</strong>
-              {d.kategorija ? <> — <em>{d.kategorija}</em></> : null}
-              <br />
-              Datum: {d.datum} — Cena: {formatCena(d.cena)}
-              <br />
-              <Link to={`/dogadjaji/${d.id}`}>Detalji</Link>
-            </li>
+            <div className="col-12 col-sm-6 col-lg-4 col-xl-3" key={d.id}>
+              <DogadjajKartica dogadjaj={d} />
+            </div>
           ))}
-        </ul>
+        </div>
       )}
 
-      <Paginacija
-        trenutna={bezbednaStrana}
-        ukupno={ukupnoStrana}
-        onPromeni={promeniStranu}
-      />
+      {/* PAGINACIJA */}
+      <div className="d-flex justify-content-between align-items-center mt-3">
+        <button
+          className="btn btn-outline-secondary btn-sm"
+          disabled={bezbednaStrana <= 1}
+          onClick={() => promeniStranu(bezbednaStrana - 1)}
+        >
+          Prethodna
+        </button>
+
+        <span>Stranica {bezbednaStrana} od {ukupnoStrana}</span>
+
+        <button
+          className="btn btn-outline-secondary btn-sm"
+          disabled={bezbednaStrana >= ukupnoStrana}
+          onClick={() => promeniStranu(bezbednaStrana + 1)}
+        >
+          Sledeća
+        </button>
+      </div>
     </div>
   );
 }

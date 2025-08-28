@@ -7,7 +7,6 @@ export default function PrivatnaRuta() {
   const lokacija = useLocation();
 
   if (!korisnik) {
-    // čuvamo gde je hteo da ide pa ga vraćamo posle prijave
     return <Navigate to="/prijava" replace state={{ from: lokacija.pathname }} />;
   }
   return <Outlet />;

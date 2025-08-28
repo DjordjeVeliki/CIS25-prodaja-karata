@@ -1,18 +1,17 @@
 export type MapaOcena = Record<string, Record<string, number>>;
-// struktura u localStorage: { [dogadjajId]: { [korisnikKljuč]: ocena(1-5) } }
+
 
 export class OceneMenadzer {
   private kljuc = "ocene_dogadjaja";
 
-  // --- internals ---
+  
   private ucitaj(): MapaOcena {
     try {
       const sirovo = localStorage.getItem(this.kljuc);
       if (!sirovo) return {};
       const data = JSON.parse(sirovo);
 
-      // backward kompatibilnost: ako je star format bio niz brojeva
-      // pretvori u mapu sa veštačkim ključevima
+
       for (const k of Object.keys(data)) {
         if (Array.isArray(data[k])) {
           const arr: number[] = data[k];
@@ -36,13 +35,10 @@ export class OceneMenadzer {
     return Math.max(1, Math.min(5, o));
   }
 
-  // --- javne metode ---
-
   oceni(dogadjajId: number, korisnikKljuč: string, ocena: number) {
     const mapa = this.ucitaj();
     const d = String(dogadjajId);
     if (!mapa[d]) mapa[d] = {};
-    // dozvoli samo JEDNU ocenu po korisniku: set, ne push
     mapa[d][korisnikKljuč] = this.ograniči(ocena);
     this.sačuvaj(mapa);
   }

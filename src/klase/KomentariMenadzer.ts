@@ -1,13 +1,13 @@
 export interface TipKomentara {
-  id: string;                 // unikatan id komentara
-  autorKljuc: string;         // stabilan ključ korisnika (id:, email:, ime:)
-  autorPrikaz: string;        // kako da prikažemo ime autora
+  id: string;                 
+  autorKljuc: string;         
+  autorPrikaz: string;         
   tekst: string;
-  vreme: number;              // Date.now()
+  vreme: number;              
 }
 
 export type MapaKomentara = Record<string, TipKomentara[]>;
-// localStorage struktura: { [dogadjajId]: TipKomentara[] }
+
 
 export class KomentariMenadzer {
   private kljuc = "komentari_dogadjaja";

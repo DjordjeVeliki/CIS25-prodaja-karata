@@ -10,5 +10,5 @@ export interface Narudzbina {
   korisnikId: string;
   ukupno: number;
   stavke: StavkaNarudzbine[];
-  datumISO: string; // npr. 2025-08-27T21:05:00.000Z
+  datumISO: string; 
 }

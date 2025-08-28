@@ -14,7 +14,7 @@ import NotFound from "./stranice/NotFound";
 
 // zaštite
 import GostRuta from "./komponente/GostRuta";
-import PrivatnaRuta from "./zastita/PrivatnaRuta"; // ako se kod tebe zove ZasticenaRuta, izmeni ovaj import
+import PrivatnaRuta from "./zastita/PrivatnaRuta"; 
 
 export const router = createBrowserRouter([
   {
@@ -49,7 +49,6 @@ export const router = createBrowserRouter([
         ],
       },
 
-      // 404 mora biti poslednja
       { path: "*", element: <NotFound /> },
     ],
   },

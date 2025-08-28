@@ -17,6 +17,6 @@ export function sacuvajNarudzbine(korisnikId: string, n: Narudzbina[]) {
 
 export function dodajNarudzbinu(korisnikId: string, narudzbina: Narudzbina) {
   const sve = ucitajNarudzbine(korisnikId);
-  sve.unshift(narudzbina); // najnovija na vrh
+  sve.unshift(narudzbina); 
   sacuvajNarudzbine(korisnikId, sve);
 }
