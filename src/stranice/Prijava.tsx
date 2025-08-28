@@ -14,6 +14,12 @@ export default function Prijava() {
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setGreska(null);
+
+    if (!email || !lozinka) {
+      setGreska("Unesite email i lozinku.");
+      return;
+    }
+
     try {
       await prijava(email, lozinka);
       const back = lok?.state?.from ?? "/";
@@ -27,12 +33,28 @@ export default function Prijava() {
     <div>
       <h2>Prijava</h2>
       <form onSubmit={onSubmit}>
-        <div><input value={email} onChange={e=>setEmail(e.target.value)} placeholder="Email" /></div>
-        <div><input type="password" value={lozinka} onChange={e=>setLozinka(e.target.value)} placeholder="Lozinka" /></div>
-        {greska && <p style={{color:"crimson"}}>{greska}</p>}
+        <div>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Email"
+          />
+        </div>
+        <div>
+          <input
+            type="password"
+            value={lozinka}
+            onChange={(e) => setLozinka(e.target.value)}
+            placeholder="Lozinka"
+          />
+        </div>
+        {greska && <p style={{ color: "crimson" }}>{greska}</p>}
         <button>Prijavi se</button>
       </form>
-      <p>Nemate nalog? <Link to="/registracija">Registrujte se</Link></p>
+      <p>
+        Nemate nalog? <Link to="/registracija">Registrujte se</Link>
+      </p>
     </div>
   );
 }
