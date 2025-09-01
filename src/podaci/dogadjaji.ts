@@ -5,6 +5,7 @@ export interface Dogadjaj {
   datum: string;
   cena: number;
   kategorija?: string;
+  mesto: string;
 }
 
 export const dogadjaji: Dogadjaj[] = [
@@ -14,15 +15,17 @@ export const dogadjaji: Dogadjaj[] = [
     opis: "Veliki koncert domaće rok legende.",
     datum: "2025-09-10",
     cena: 1500,
-    kategorija: "koncert"
+    kategorija: "koncert",
+    mesto: "Beograd"
     },
     {
     id: 2,
     naziv: "Pozorišna predstava - Hamlet",
     opis: "Klasik u izvedbi Narodnog pozorišta.",
-    datum: "2025-09-20",
+    datum: "2025-09-02",
     cena: 1200,
-    kategorija: "pozoriste"
+    kategorija: "pozoriste",
+    mesto: "Novi Sad"
     },
     {
     id: 3,
@@ -30,6 +33,7 @@ export const dogadjaji: Dogadjaj[] = [
     opis: "Retke relikvije iz drevnog Egipta.",
     datum: "2025-10-01",
     cena: 800,
-    kategorija: "izlozba"
+    kategorija: "izlozba",
+    mesto: "Niš"
     }
 ];
