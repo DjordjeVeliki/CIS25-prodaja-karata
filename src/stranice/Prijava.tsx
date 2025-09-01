@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import type { FormEvent } from "react";
 import { AuthKontekst } from "../kontekst/AuthKontekst";
-import { useLocation, useNavigate, Link } from "react-router-dom";
+import { useLocation, useNavigate, NavLink } from "react-router-dom";
 
 export default function Prijava() {
   const { prijava } = useContext(AuthKontekst);
@@ -11,7 +11,7 @@ export default function Prijava() {
   const navigate = useNavigate();
   const lok = useLocation() as any;
 
-  const onSubmit = async (e: FormEvent) => {
+  const onPrijava = async (e: FormEvent) => {
     e.preventDefault();
     setGreska(null);
 
@@ -30,31 +30,49 @@ export default function Prijava() {
   };
 
   return (
-    <div>
-      <h2>Prijava</h2>
-      <form onSubmit={onSubmit}>
-        <div>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
-          />
+    <div className="container py-4">
+      <div className="row justify-content-center">
+        <div className="col-md-6 col-lg-5">
+          <div className="card shadow-sm">
+            <div className="card-body p-4">
+              <h2 className="h4 mb-3">Prijava</h2>
+              <form onSubmit={onPrijava}>
+                <div className="mb-3">
+                  <label htmlFor="email" className="form-label">Email</label>
+                  <input
+                    id="email"
+                    type="email"
+                    className="form-control"
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="mb-3">
+                  <label htmlFor="lozinka" className="form-label">Lozinka</label>
+                  <input
+                    id="lozinka"
+                    type="password"
+                    className="form-control"
+                    value={lozinka}
+                    onChange={e => setLozinka(e.target.value)}
+                    required
+                  />
+                </div>
+
+                {greska && <div className="alert alert-danger py-2">{greska}</div>}
+
+                <button className="btn btn-primary w-100" type="submit">Prijavi se</button>
+              </form>
+
+              <div className="text-secondary mt-3">
+                Nemate nalog? <NavLink to="/registracija">Registrujte se</NavLink>
+              </div>
+            </div>
+          </div>
         </div>
-        <div>
-          <input
-            type="password"
-            value={lozinka}
-            onChange={(e) => setLozinka(e.target.value)}
-            placeholder="Lozinka"
-          />
-        </div>
-        {greska && <p style={{ color: "crimson" }}>{greska}</p>}
-        <button>Prijavi se</button>
-      </form>
-      <p>
-        Nemate nalog? <Link to="/registracija">Registrujte se</Link>
-      </p>
+      </div>
     </div>
   );
 }

@@ -48,6 +48,11 @@ export default function Navigacija() {
                 )}
               </NavLink>
             </li>
+            {korisnik && (
+              <li className="nav-item">
+                <NavLink className="nav-link" to="/profil">Profil</NavLink>
+              </li>
+            )}
           </ul>
           <div className="ms-3 btn-group" role="group" aria-label="Valuta">
             <button

@@ -15,7 +15,7 @@ export default function Registracija() {
   const proveriEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const regexLozinka = /^(?=.*[A-Z])(?=.*\d).{6,}$/; // min 6, bar 1 veliko i 1 cifra
 
-  const onSubmit = async (e: FormEvent) => {
+  const onRegistracija = async (e: FormEvent) => {
     e.preventDefault();
     setGreska(null);
 
@@ -45,43 +45,70 @@ export default function Registracija() {
   };
 
   return (
-    <div>
-      <h2>Registracija</h2>
-      <form onSubmit={onSubmit}>
-        <div>
-          <input
-            value={ime}
-            onChange={(e) => setIme(e.target.value)}
-            placeholder="Ime i prezime"
-          />
+    <div className="container py-4">
+      <div className="row justify-content-center">
+        <div className="col-md-7 col-lg-6">
+          <div className="card shadow-sm">
+            <div className="card-body p-4">
+              <h2 className="h4 mb-3">Registracija</h2>
+
+              <form onSubmit={onRegistracija}>
+                <div className="mb-3">
+                  <label htmlFor="ime" className="form-label">Ime i prezime</label>
+                  <input
+                    id="ime"
+                    className="form-control"
+                    value={ime}
+                    onChange={e => setIme(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="mb-3">
+                  <label htmlFor="email" className="form-label">Email</label>
+                  <input
+                    id="email"
+                    type="email"
+                    className="form-control"
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="mb-3">
+                  <label htmlFor="lozinka" className="form-label">Lozinka</label>
+                  <input
+                    id="lozinka"
+                    type="password"
+                    className="form-control"
+                    placeholder="min 6, 1 veliko slovo i broj"
+                    value={lozinka}
+                    onChange={e => setLozinka(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="mb-3">
+                  <label htmlFor="potvrda" className="form-label">Potvrda lozinke</label>
+                  <input
+                    id="potvrda"
+                    type="password"
+                    className="form-control"
+                    value={potvrda}
+                    onChange={e => setPotvrda(e.target.value)}
+                    required
+                  />
+                </div>
+
+                {greska && <div className="alert alert-danger py-2">{greska}</div>}
+
+                <button className="btn btn-primary w-100" type="submit">Kreiraj nalog</button>
+              </form>
+            </div>
+          </div>
         </div>
-        <div>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
-          />
-        </div>
-        <div>
-          <input
-            type="password"
-            value={lozinka}
-            onChange={(e) => setLozinka(e.target.value)}
-            placeholder="Lozinka (min 6, 1 veliko slovo, 1 broj)"
-          />
-        </div>
-        <div>
-          <input
-            type="password"
-            value={potvrda}
-            onChange={(e) => setPotvrda(e.target.value)}
-            placeholder="Potvrda lozinke"
-          />
-        </div>
-        {greska && <p style={{ color: "crimson" }}>{greska}</p>}
-        <button>Kreiraj nalog</button>
-      </form>
+      </div>
     </div>
   );
 }
