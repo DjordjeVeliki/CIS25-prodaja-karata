@@ -51,7 +51,7 @@ export default function Komentari({ dogadjajId }: Props) {
     <div className="mt-4">
       <h5 className="mb-3">Komentari ({lista.length})</h5>
 
-      {/* Forma za unos */}
+      
       {korisnikKljuc ? (
         <div className="mb-3">
           <label className="form-label">Dodaj komentar</label>
@@ -74,7 +74,7 @@ export default function Komentari({ dogadjajId }: Props) {
         <p className="text-muted">Prijavite se da biste ostavili komentar.</p>
       )}
 
-      {/* Lista komentara */}
+      
       <div className="vstack gap-3">
         {lista.map((k) => (
           <div key={k.id} className="card">

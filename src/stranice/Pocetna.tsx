@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import DogadjajKartica from "../komponente/DogadjajKartica";
-import { dogadjaji } from "../podaci/dogadjaji"; // prilagodi ako ti je drugačiji export
+import { dogadjaji } from "../podaci/dogadjaji"; 
 import { useMemo } from "react";
 
 

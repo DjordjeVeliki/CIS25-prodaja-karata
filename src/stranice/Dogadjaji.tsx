@@ -1,85 +1,66 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useContext } from "react";
 import { useSearchParams } from "react-router-dom";
 import { dogadjaji, type Dogadjaj } from "../podaci/dogadjaji";
 import DogadjajKartica from "../komponente/DogadjajKartica";
+import { ValutaKontekst } from "../kontekst/ValutaKontekst";
 
 const PO_STRANI = 8;
 
-// helper: skini dijakritiku i spusti na lowercase (radi sa 'pozorište'/'pozoriste')
 const norm = (s: string) =>
   s.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
 
 export default function Dogadjaji() {
   const [params, setParams] = useSearchParams();
+  const { valuta, konvertuj } = useContext(ValutaKontekst);
 
-  // UI state
-  const [kategorija, setKategorija] = useState<string>(""); // "" = sve
-  const [minCenaStr, setMinCenaStr] = useState<string>("");
-  const [maxCenaStr, setMaxCenaStr] = useState<string>("");
+  const urlKategorija = params.get("k") ?? params.get("kategorija") ?? "";
+  const minCenaStr = params.get("min") ?? "";
+  const maxCenaStr = params.get("max") ?? "";
+  const stranica = Math.max(1, Number(params.get("page") ?? "1"));
 
-  // sve dostupne kategorije iz podataka
+  const setParam = (key: "k" | "min" | "max" | "page", value: string) => {
+    const next = new URLSearchParams(params);
+    if (key === "k") {
+      if (value) next.set("k", value);
+      else next.delete("k");
+      next.delete("kategorija");
+      next.set("page", "1");
+      setParams(next, { replace: true });
+      return;
+    }
+    if (value) next.set(key, value);
+    else next.delete(key);
+    if (key !== "page") next.set("page", "1");
+    setParams(next, { replace: true });
+  };
+
   const kategorije = useMemo(() => {
     const s = new Set<string>();
-    dogadjaji.forEach((d) => {
-      if (d.kategorija) s.add(d.kategorija);
-    });
+    dogadjaji.forEach((d) => d.kategorija && s.add(d.kategorija));
     return Array.from(s).sort();
   }, []);
 
-  // --- 1) ČITANJE IZ URL-a (inicijalno i na back/forward) -------------------
-  useEffect(() => {
-    const rawK = params.get("k") ?? params.get("kategorija") ?? "";
-    const rawMin = params.get("min") ?? "";
-    const rawMax = params.get("max") ?? "";
+  const selectKategorija = useMemo(() => {
+    return kategorije.find((k) => norm(k) === norm(urlKategorija)) ?? "";
+  }, [kategorije, urlKategorija]);
 
-    // mapiraj param na stvarnu vrednost iz liste (da bi <select> imao tačan value)
-    const matchK =
-      kategorije.find((k) => norm(k) === norm(rawK)) ?? (rawK ? "" : "");
-
-    setKategorija(matchK);       // "" ako nema ili ne postoji u listi
-    setMinCenaStr(rawMin);
-    setMaxCenaStr(rawMax);
-  }, [params, kategorije]);
-
-  // --- 2) UPIS U URL kad korisnik menja filtere (debounce) ------------------
-  useEffect(() => {
-    const id = setTimeout(() => {
-      const next = new URLSearchParams(params);
-
-      if (kategorija) next.set("k", kategorija);
-      else next.delete("k");
-
-      if (minCenaStr) next.set("min", minCenaStr);
-      else next.delete("min");
-
-      if (maxCenaStr) next.set("max", maxCenaStr);
-      else next.delete("max");
-
-      // resetuj stranicu kad se promene filteri
-      next.set("page", "1");
-      setParams(next, { replace: true });
-    }, 300);
-
-    return () => clearTimeout(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [kategorija, minCenaStr, maxCenaStr]); // namerno bez params/setParams
-
-  // --- 3) Parsiranje vrednosti i filtriranje --------------------------------
-  const stranica = Math.max(1, Number(params.get("page") ?? "1"));
   const minCena = minCenaStr ? Number(minCenaStr) : Number.NEGATIVE_INFINITY;
   const maxCena = maxCenaStr ? Number(maxCenaStr) : Number.POSITIVE_INFINITY;
 
+  const cenaUValuti = (rsd: number) =>
+    valuta === "RSD" ? rsd : (konvertuj(rsd) ?? NaN);
+
   const filtrirani: Dogadjaj[] = useMemo(() => {
+    const kNorm = norm(urlKategorija);
     return dogadjaji.filter((d) => {
-      const katOK = !kategorija || (d.kategorija ?? "") === kategorija;
-      const cena = d.cena;
+      const katOK = !urlKategorija || norm(d.kategorija ?? "") === kNorm;
+      const cena = cenaUValuti(d.cena);
       const minOK = isFinite(minCena) ? cena >= minCena : true;
       const maxOK = isFinite(maxCena) ? cena <= maxCena : true;
       return katOK && minOK && maxOK;
     });
-  }, [kategorija, minCena, maxCena]);
+  }, [urlKategorija, minCena, maxCena, valuta, konvertuj]);
 
-  // --- 4) Paginacija ---------------------------------------------------------
   const ukupnoStrana = Math.max(1, Math.ceil(filtrirani.length / PO_STRANI));
   const bezbednaStrana = Math.min(stranica, ukupnoStrana);
   const od = (bezbednaStrana - 1) * PO_STRANI;
@@ -95,13 +76,12 @@ export default function Dogadjaji() {
     <div className="container my-4">
       <h2 className="mb-3">Spisak događaja</h2>
 
-      {/* FILTERI */}
       <div id="filteri" className="row g-2 align-items-center mb-3">
         <div className="col-12 col-md-4 col-lg-3">
           <select
             className="form-select"
-            value={kategorija}
-            onChange={(e) => setKategorija(e.target.value)}
+            value={selectKategorija}
+            onChange={(e) => setParam("k", e.target.value)}
           >
             <option value="">Sve kategorije</option>
             {kategorije.map((k) => (
@@ -116,9 +96,9 @@ export default function Dogadjaji() {
           <input
             type="number"
             className="form-control"
-            placeholder="Min cena"
+            placeholder={`Min cena (${valuta})`}
             value={minCenaStr}
-            onChange={(e) => setMinCenaStr(e.target.value)}
+            onChange={(e) => setParam("min", e.target.value)}
           />
         </div>
 
@@ -126,14 +106,13 @@ export default function Dogadjaji() {
           <input
             type="number"
             className="form-control"
-            placeholder="Max cena"
+            placeholder={`Max cena (${valuta})`}
             value={maxCenaStr}
-            onChange={(e) => setMaxCenaStr(e.target.value)}
+            onChange={(e) => setParam("max", e.target.value)}
           />
         </div>
       </div>
 
-      {/* LISTA */}
       {prikaz.length === 0 ? (
         <p className="text-muted">Nema događaja po zadatim filterima.</p>
       ) : (
@@ -146,7 +125,6 @@ export default function Dogadjaji() {
         </div>
       )}
 
-      {/* PAGINACIJA */}
       <div className="d-flex justify-content-between align-items-center mt-3">
         <button
           className="btn btn-outline-secondary btn-sm"
