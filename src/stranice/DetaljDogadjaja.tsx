@@ -3,10 +3,14 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { dogadjaji } from "../podaci/dogadjaji";
 import { KorpaKontekst } from "../kontekst/KorpaKontekst";
 import { AuthKontekst } from "../kontekst/AuthKontekst";
-import { formatCena, formatDatumVreme } from "../utils/format";
+import { formatDatumVreme } from "../utils/format";
 import StarRating from "../komponente/StarRating";
 import Komentari from "../komponente/Komentari";
 import VremenskaPrognoza from "../komponente/VremenskaPrognoza";
+import { ValutaKontekst } from "../kontekst/ValutaKontekst";
+
+
+
 
 export default function DetaljDogadjaja() {
   const { id } = useParams();
@@ -16,9 +20,12 @@ export default function DetaljDogadjaja() {
   const { korisnik } = useContext(AuthKontekst);
   const navigate = useNavigate();
   const location = useLocation();
+  const { formatiraj } = useContext(ValutaKontekst);
+
 
   if (!dogadjaj) return <h2>Događaj nije pronađen</h2>;
-
+  
+  
   const onDodaj = () => {
     if (!korisnik) {
       navigate("/prijava", { state: { redirectTo: location.pathname } });
@@ -41,7 +48,7 @@ export default function DetaljDogadjaja() {
         <strong>Datum:</strong> {formatDatumVreme(dogadjaj.datum)}
       </p>
       <p className="mb-3">
-        <strong>Cena:</strong> {formatCena(dogadjaj.cena)} RSD
+        <strong>Cena:</strong> {formatiraj(dogadjaj.cena)}
       </p>
       <div className="d-flex align-items-center gap-2 mb-3 mt-3">
         <button
@@ -56,7 +63,7 @@ export default function DetaljDogadjaja() {
           <small className="text-muted">Prijavite se da biste dodali u korpu.</small>
         )}
       </div>
-      
+
       <div className="mb-4">
         <h6 className="mb-1">Oceni događaj</h6>
         <StarRating dogadjajId={dogadjaj.id} />

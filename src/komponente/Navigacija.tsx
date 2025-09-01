@@ -2,11 +2,15 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useContext, useMemo } from "react";
 import { AuthKontekst } from "../kontekst/AuthKontekst";
 import { KorpaKontekst } from "../kontekst/KorpaKontekst";
+import { ValutaKontekst } from "../kontekst/ValutaKontekst";
+
+
 
 export default function Navigacija() {
   const { korisnik, odjava } = useContext(AuthKontekst);
   const { stavke, ukupnoKomada } = useContext(KorpaKontekst);
   const navigate = useNavigate();
+  const { valuta, setValuta, kurs } = useContext(ValutaKontekst);
 
   const brojUKorpi = useMemo(
     () =>
@@ -45,6 +49,21 @@ export default function Navigacija() {
               </NavLink>
             </li>
           </ul>
+          <div className="ms-3 btn-group" role="group" aria-label="Valuta">
+            <button
+              className={`btn btn-sm ${valuta === "RSD" ? "btn-primary" : "btn-outline-primary"}`}
+              onClick={() => setValuta("RSD")}
+            >
+              RSD
+            </button>
+            <button
+              className={`btn btn-sm ${valuta === "EUR" ? "btn-primary" : "btn-outline-primary"}`}
+              onClick={() => setValuta("EUR")}
+              title={kurs == null ? "Kurs se učitava…" : "Prikaz cena u EUR"}
+            >
+              EUR
+            </button>
+          </div>
 
           <ul className="navbar-nav">
             {korisnik ? (

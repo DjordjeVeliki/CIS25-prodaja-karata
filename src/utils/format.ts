@@ -5,3 +5,4 @@ export const formatDatumVreme = (iso: string | number | Date) => {
   const d = new Date(iso);
   return d.toLocaleDateString("sr-RS") + " " + d.toLocaleTimeString("sr-RS");
 };
+

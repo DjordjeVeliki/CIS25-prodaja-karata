@@ -4,11 +4,13 @@ import { KorpaKontekst } from "../kontekst/KorpaKontekst";
 import { AuthKontekst } from "../kontekst/AuthKontekst";
 import { dodajNarudzbinu } from "../servisi/narudzbine";
 import type { Narudzbina } from "../modeli/Narudzbina";
-import { formatCena } from "../utils/format";
+import { ValutaKontekst } from "../kontekst/ValutaKontekst";
+
 
 export default function Korpa() {
   const { stavke, promeniKolicinu, ukloniIzKorpe, ocistiKorpu, korpa } = useContext(KorpaKontekst);
   const { korisnik } = useContext(AuthKontekst);
+  const { formatiraj } = useContext(ValutaKontekst);
   const [poruka, setPoruka] = useState<string | null>(null);
   const ukupno = useMemo(() => korpa.ukupno(), [korpa]);
 
@@ -64,13 +66,13 @@ export default function Korpa() {
             {stavke.map(s => (
               <tr key={s.idDogadjaja}>
                 <td>{s.naziv}</td>
-                <td>{formatCena(s.cena)}</td>
+                <td>{formatiraj(s.cena)}</td>
                 <td>
                   <button onClick={() => promeniKolicinu(s.idDogadjaja, Math.max(1, s.kolicina - 1))}>-</button>
                   <span style={{ padding: "0 8px" }}>{s.kolicina}</span>
                   <button onClick={() => promeniKolicinu(s.idDogadjaja, s.kolicina + 1)}>+</button>
                 </td>
-                <td>{formatCena(s.cena * s.kolicina)}</td>
+                <td>{formatiraj(s.cena * s.kolicina)}</td>
                 <td>
                   <button onClick={() => ukloniIzKorpe(s.idDogadjaja)}>Ukloni</button>
                 </td>
@@ -81,7 +83,7 @@ export default function Korpa() {
       )}
 
       <div style={{ marginTop: 16 }}>
-        <strong>Ukupno: {formatCena(korpa.ukupno())}</strong>
+        <strong>Ukupno: {formatiraj(korpa.ukupno())}</strong>
       </div>
 
       <div style={{ marginTop: 12 }}>

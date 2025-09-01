@@ -1,7 +1,9 @@
 import { Link } from "react-router-dom";
+import { useContext } from "react";
 import { OceneMenadzer } from "../klase/OceneMenadzer";
 import type { Dogadjaj } from "../podaci/dogadjaji";
-import { formatCena } from "../utils/format";
+import { ValutaKontekst } from "../kontekst/ValutaKontekst";
+
 
 function formatDatum(iso: string) {
   const d = new Date(iso);
@@ -12,6 +14,8 @@ export default function DogadjajKartica({ dogadjaj }: { dogadjaj: Dogadjaj }) {
   const om = new OceneMenadzer();
   const prosek = om.prosek(dogadjaj.id);
   const broj = om.brojOcena(dogadjaj.id);
+
+  const { formatiraj } = useContext(ValutaKontekst);
 
   return (
     <div className="card h-100">
@@ -28,7 +32,7 @@ export default function DogadjajKartica({ dogadjaj }: { dogadjaj: Dogadjaj }) {
         </p>
 
         <p className="fw-semibold mb-2">
-          Cena: {formatCena(dogadjaj.cena)}
+          Cena: {formatiraj(dogadjaj.cena)}
         </p>
 
         <div className="mt-auto d-flex justify-content-between align-items-center">

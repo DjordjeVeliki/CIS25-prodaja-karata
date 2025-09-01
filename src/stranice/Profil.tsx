@@ -1,11 +1,15 @@
 import { useContext, useMemo } from "react";
 import { AuthKontekst } from "../kontekst/AuthKontekst";
 import { ucitajNarudzbine } from "../servisi/narudzbine";
-import { formatCena, formatDatumVreme } from "../utils/format";
+import { formatDatumVreme } from "../utils/format";
+import { ValutaKontekst } from "../kontekst/ValutaKontekst";
+
+
 
 
 export default function Profil() {
   const { korisnik, odjava } = useContext(AuthKontekst);
+  const { formatiraj } = useContext(ValutaKontekst);
 
   const narudzbine = useMemo(
     () => (korisnik ? ucitajNarudzbine(korisnik.id) : []),
@@ -30,12 +34,12 @@ export default function Profil() {
             <li key={n.id} style={{ marginBottom: 12 }}>
               <div>
                 <strong>Datum:</strong> {formatDatumVreme(n.datumISO)} |
-                <strong> Ukupno:</strong> {formatCena(n.ukupno)}
+                <strong> Ukupno:</strong> {formatiraj(n.ukupno)}
               </div>
               <div>
                 {n.stavke.map(s => (
                   <div key={s.idDogadjaja}>
-                    {s.naziv} × {s.kolicina} = {s.kolicina * s.cena} RSD
+                    {s.naziv} × {s.kolicina} = {formatiraj(s.kolicina * s.cena)}
                   </div>
                 ))}
               </div>
