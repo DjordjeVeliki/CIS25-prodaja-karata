@@ -1,14 +1,17 @@
-export interface StavkaNarudzbine {
-  idDogadjaja: number;
+export type StavkaNarudzbine = {
+  idDogadjaja: string;
   naziv: string;
-  cena: number;
+  cena: number;     
   kolicina: number;
-}
+};
 
-export interface Narudzbina {
+export type Narudzbina = {
   id: string;
   korisnikId: string;
-  ukupno: number;
+  datumISO: string;
+  medjuzbir?: number; 
+  popust?: number;    
+  kupon?: string;    
+  ukupno: number;    
   stavke: StavkaNarudzbine[];
-  datumISO: string; 
-}
+};
