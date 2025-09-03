@@ -1,69 +1,82 @@
-# React + TypeScript + Vite
+# 🎟️ Prodaja karata – React aplikacija
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Ova aplikacija omogućava korisnicima pregled i kupovinu karata za različite događaje (pozorišne predstave, koncerte, muzejske izložbe...).  
+Korisnici mogu da se registruju, prijave, pregledaju listu događaja sa filtrima i paginacijom, vide detalje događaja, dodaju ih u korpu i izvrše narudžbinu.  
+Aplikacija je rađena u okviru seminarskog rada i pokriva zadate funkcionalnosti za React deo projekta.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Pokretanje projekta
 
-## Expanding the ESLint configuration
+1. Klonirati repozitorijum:
+   ```bash
+   git clone <repo-url>
+   cd prodaja-karata
+   ```
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+2. Instalirati zavisnosti:
+   ```bash
+   npm install
+   ```
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+3. Pokrenuti aplikaciju u development modu:
+   ```bash
+   npm run dev
+   ```
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+4. Otvoriti u browseru:
+   ```
+   http://localhost:5173
+   ```
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+---
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 📂 Struktura projekta
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- `src/komponente/` – reusable komponente (Navigacija, DogadjajKartica, StarRating, Komentari, VremenskaPrognoza...)  
+- `src/stranice/` – stranice aplikacije (Prijava, Registracija, Pocetna, Dogadjaji, DetaljDogadjaja, Profil, Korpa...)  
+- `src/kontekst/` – konteksti za globalno stanje (AuthKontekst, KorpaKontekst, ValutaKontekst)  
+- `src/modeli/` – TypeScript interfejsi (Korisnik, Dogadjaj, StavkaKorpe, Narudzbina...)  
+- `src/klase/` – klase sa metodama (Korpa, OceneMenadzer, KomentariMenadzer)  
+- `src/servisi/` – API servisi (pozivi za vreme i geokoding)  
+- `src/kuke/` – custom hooks (`useKursEur` sa keširanjem kursa u localStorage)  
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+---
+
+## ✨ Implementirane funkcionalnosti
+
+- Registracija i prijava korisnika (mock auth)  
+- Zaštita ruta (`PrivatnaRuta`, `GostRuta`)  
+- Lista događaja sa **paginacijom** i **filterima** (kategorija, cena)  
+- Detalji događaja sa prikazom i dodavanjem u **korpu**  
+- Korpa sa mogućnošću menjanja količina i obračunom ukupne cene  
+- Kuponi i popusti (primena kodova iz `KUPONI`)  
+- Prikaz cene u **RSD ↔ EUR** sa kursom iz API-ja (exchangerate.host)  
+- Vremenska prognoza za mesto i datum događaja (Open-Meteo API)  
+- Čuvanje podataka u **localStorage** (kurs, sesija)  
+- Responsivan dizajn uz Bootstrap grid sistem  
+
+---
+
+## 🔧 Tehnologije
+
+- **React 18** + **TypeScript**  
+- **Vite** za bundling  
+- **React Router DOM** za rute i navigaciju  
+- **Bootstrap 5** za stilizaciju i grid  
+- **Open-Meteo API** i **Exchangerate API** za realne podatke  
+- **LocalStorage** za trajno čuvanje odabranih podataka  
+
+---
+
+## 👥 Autori
+
+- Ime i prezime, broj indeksa  
+- (dodatni članovi tima ako postoje)
+
+---
+
+## 📌 Napomena
+
+Ovaj repozitorijum predstavlja **React deo seminarskog rada**.  
+Baza podataka i Docker deo projekta biće implementirani u sledećoj fazi.  

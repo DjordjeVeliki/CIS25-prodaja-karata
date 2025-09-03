@@ -11,7 +11,14 @@ export default function VremenskaPrognoza({ mesto, datumISO }: Props) {
   const [greska, setGreska] = useState<string | null>(null);
   const [lista, setLista] = useState<PrognozaDan[]>([]);
 
-  const danTrazen = useMemo(() => datumISO.slice(0, 10), [datumISO]);
+  const danTrazen = useMemo(() => {
+    try {
+      return new Date(datumISO).toISOString().slice(0, 10);
+    } catch {
+      return datumISO.slice(0, 10); 
+    }
+  }, [datumISO]);
+
 
   useEffect(() => {
     let alive = true;

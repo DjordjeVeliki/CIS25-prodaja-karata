@@ -57,7 +57,7 @@ export async function prognozaZaLokaciju(
 ): Promise<PrognozaDan[]> {
   const url =
     `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
-    `&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto`;
+    `&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_mean&timezone=auto`;
   const r = await fetch(url);
   if (!r.ok) return [];
   const d = await r.json();
@@ -67,7 +67,7 @@ export async function prognozaZaLokaciju(
     tMin: d.daily.temperature_2m_min[i],
     tMax: d.daily.temperature_2m_max[i],
     wcode: d.daily.weathercode[i],
-    padavineProcenat: d.daily.precipitation_probability_max[i],
+    padavineProcenat: d.daily.precipitation_probability_mean[i],
   }));
   return res;
 }
