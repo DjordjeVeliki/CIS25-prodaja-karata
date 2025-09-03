@@ -69,13 +69,6 @@ Aplikacija je rađena u okviru seminarskog rada i pokriva zadate funkcionalnosti
 
 ---
 
-## 👥 Autori
-
-- Ime i prezime, broj indeksa  
-- (dodatni članovi tima ako postoje)
-
----
-
 ## 📌 Napomena
 
 Ovaj repozitorijum predstavlja **React deo seminarskog rada**.  
