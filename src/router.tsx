@@ -2,7 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 
 import Okvir from "./Okvir";
 
-// stranice
+
 import Pocetna from "./stranice/Pocetna";
 import Prijava from "./stranice/Prijava";
 import Registracija from "./stranice/Registracija";
@@ -12,7 +12,7 @@ import Korpa from "./stranice/Korpa";
 import Profil from "./stranice/Profil";
 import NotFound from "./stranice/NotFound";
 
-// zaštite
+
 import GostRuta from "./komponente/GostRuta";
 import PrivatnaRuta from "./zastita/PrivatnaRuta"; 
 
@@ -21,12 +21,12 @@ export const router = createBrowserRouter([
     path: "/",
     element: <Okvir />,
     children: [
-      // javne rute
+      
       { index: true, element: <Pocetna /> },
       { path: "dogadjaji", element: <Dogadjaji /> },
       { path: "dogadjaji/:id", element: <DetaljDogadjaja /> },
 
-      // samo za goste (ulogovani se preusmeravaju na /profil)
+      
       { path: "prijava", element: (
           <GostRuta>
             <Prijava />
@@ -40,7 +40,7 @@ export const router = createBrowserRouter([
         )
       },
 
-      // samo za ulogovane (PrivatnaRuta štiti sve child rute)
+      
       {
         element: <PrivatnaRuta />,
         children: [
