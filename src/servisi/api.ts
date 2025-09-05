@@ -1,10 +1,7 @@
-// src/servisi/api.ts
 export const API = (import.meta as any).env?.VITE_API_URL as string;
 
 if (!API) {
-  // Pomoćna poruka da znaš ako zaboraviš VITE_API_URL
-  // (u Docker buildu ga zadamo, a lokalno je u .env fajlu)
-  // console.warn("VITE_API_URL nije setovan! Postavi ga u .env ili kroz build arg.");
+  
 }
 
 async function http<T>(path: string, init?: RequestInit): Promise<T> {
@@ -16,7 +13,7 @@ async function http<T>(path: string, init?: RequestInit): Promise<T> {
     },
   });
 
-  // Pokušaj da pročitaš JSON i kad status nije OK (da bi lepa poruka otišla dalje)
+  
   const text = await res.text().catch(() => "");
   const data = text ? (() => { try { return JSON.parse(text); } catch { return text; } })() : null;
 

@@ -2,7 +2,7 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 
-// DODAJ .js EKSTENZIJE U RUTE
+
 import dogadjaji from './routes/dogadjaji.js';
 import kategorije from './routes/kategorije.js';
 import kuponi from './routes/kuponi.js';

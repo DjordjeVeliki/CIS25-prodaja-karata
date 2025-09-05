@@ -1,4 +1,4 @@
-// src/servisi/kuponi.ts
+
 import { API } from "./api";
 
 export type KuponTip = "percent" | "fixed";
@@ -22,10 +22,7 @@ export type ProveraKuponaFail = {
 
 export type ProveraKuponaResp = ProveraKuponaOk | ProveraKuponaFail;
 
-/**
- * Napomena: NEMOJ bacati izuzetak na 4xx iz backenda.
- * Uvek mapiramo u { ok: false, razlog: "..."} da UI lepo prikaže tekst poruke.
- */
+
 export async function proveriKuponKod(
   kod: string,
   total: number

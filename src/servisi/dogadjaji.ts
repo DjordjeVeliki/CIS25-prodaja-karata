@@ -1,15 +1,15 @@
-// src/servisi/dogadjaji.ts
+
 import { getJson } from "./api";
 
 export type Dogadjaj = {
   id: number;
   naziv: string;
   opis?: string | null;
-  datum: string;             // ISO string
-  cena: number;              // u RSD
+  datum: string;             
+  cena: number;              
   kategorija?: string | null;
   mesto: string;
-  slika_url?: string | null; // opciono (backend trenutno ne šalje; UI ignoriše ako je nema)
+  slika_url?: string | null; 
 };
 
 export type ListaDogadjaja = {
