@@ -1,0 +1,62 @@
+services:
+  mysql-db:
+    image: mysql:8.4
+    container_name: mysql-db
+    environment:
+      MYSQL_ROOT_PASSWORD: pass123
+      MYSQL_DATABASE: prodaja_karata
+    ports:
+      - "3306:3306"
+    volumes:
+      - prodaja-mysql:/var/lib/mysql
+      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -ppass123 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - prodaja-net
+    restart: unless-stopped
+
+  api:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: api
+    environment:
+      PORT: "4000"
+      DB_HOST: mysql-db
+      DB_USER: root
+      DB_PASSWORD: pass123
+      DB_NAME: prodaja_karata
+    ports:
+      - "4000:4000"
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+    networks:
+      - prodaja-net
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: src/Dockerfile
+      args:
+        VITE_API_URL: "http://localhost:4000/api"
+    container_name: web
+    ports:
+      - "8080:80"
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - prodaja-net
+    restart: unless-stopped
+
+volumes:
+  prodaja-mysql:
+
+networks:
+  prodaja-net:

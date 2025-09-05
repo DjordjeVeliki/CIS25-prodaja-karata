@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { pool } from "../db";
+import { pool } from "../db.js";
 import type { RowDataPacket } from "mysql2/promise";
 
 const r = Router();

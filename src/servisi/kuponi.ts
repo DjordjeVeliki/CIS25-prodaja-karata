@@ -1,6 +1,8 @@
+// src/servisi/kuponi.ts
 import { API } from "./api";
 
 export type KuponTip = "percent" | "fixed";
+
 export type ProveraKuponaOk = {
   ok: true;
   kupon: {
@@ -17,26 +19,35 @@ export type ProveraKuponaFail = {
   ok: false;
   razlog?: string;
 };
+
 export type ProveraKuponaResp = ProveraKuponaOk | ProveraKuponaFail;
+
+/**
+ * Napomena: NEMOJ bacati izuzetak na 4xx iz backenda.
+ * Uvek mapiramo u { ok: false, razlog: "..."} da UI lepo prikaže tekst poruke.
+ */
 export async function proveriKuponKod(
   kod: string,
   total: number
 ): Promise<ProveraKuponaResp> {
-  const url = `${API}/kuponi/proveri?kod=${encodeURIComponent(kod)}&total=${encodeURIComponent(String(total))}`;
+  const url = `${API}/kuponi/proveri?kod=${encodeURIComponent(
+    kod
+  )}&total=${encodeURIComponent(String(total))}`;
 
   try {
+    const res = await fetch(url, { headers: { "Content-Type": "application/json" } });
+    const txt = await res.text().catch(() => "");
+    const data = txt ? (() => { try { return JSON.parse(txt); } catch { return txt; } })() : null;
 
-    const res = await fetch(url);
-    const data = (await res.json().catch(() => null)) as any;
-
-    if (res.ok && data && data.ok === true) {
+    if (res.ok && data && typeof data === "object" && (data as any).ok === true) {
       return data as ProveraKuponaOk;
     }
+
     const razlog =
-      (data && (data.razlog as string)) ||
+      (data && typeof data === "object" && (data as any).razlog) ||
       (typeof data === "string" ? data : undefined) ||
       "Nepostojeći kod.";
-    return { ok: false, razlog };
+    return { ok: false, razlog: String(razlog) };
   } catch {
     return { ok: false, razlog: "Greška pri proveri kupona." };
   }

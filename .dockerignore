@@ -1,0 +1,10 @@
+node_modules
+dist
+server/node_modules
+server/dist
+docker/mysql
+.docker
+.git
+.gitignore
+Dockerfile
+Dockerfile.web
